@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Form from './Form';
 import Items from './Items';
 import { nanoid } from 'nanoid';
+import { ToastContainer, toast } from 'react-toastify';
 
 const getLocalStorage = () => {
   const list = localStorage.getItem('list');
@@ -31,18 +32,33 @@ const App = () => {
     const newItems = [...items, newItem];
     setItems(newItems);
     setLocalStorage(newItems);
+    toast.success('Item added to the list');
   };
 
   const removeItem = (itemId) => {
     const newItems = items.filter((item) => item.id !== itemId);
     setItems(newItems);
     setLocalStorage(newItems);
+    toast.error('Item removed from the list');
+  };
+
+  const editItem = (id) => {
+    const newItems = items.map((item) => {
+      if (item.id === id) {
+        const newItem = { ...item, completed: !item.completed };
+        return newItem;
+      }
+      return item;
+    });
+    setItems(newItems);
+    setLocalStorage(newItems);
   };
 
   return (
     <section className="section-center">
+      <ToastContainer position="top-center" />
       <Form addItem={addItem} />
-      <Items items={items} removeItem={removeItem} />
+      <Items items={items} removeItem={removeItem} editItem={editItem} />
     </section>
   );
 };
